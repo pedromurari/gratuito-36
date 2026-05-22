@@ -116,6 +116,15 @@ const HeroSection = () => {
       keepalive: true,
     }).catch((err) => console.error('Erro ao enviar CAPI:', err));
 
+    // Salvar lead no Google Sheets via GAS (fire-and-forget)
+    const SHEETS_URL = 'https://script.google.com/macros/s/AKfycbxm72otI63d8wOE-vPMgABP3tGmh46n1ZSeb9vTVYD1xp6lUIWNDBdfJ7IjzIff1nNh/exec';
+    const sheetsParams = new URLSearchParams();
+    sheetsParams.append('nome', trimmedName);
+    sheetsParams.append('email', trimmedEmail);
+    sheetsParams.append('whatsapp', whatsappNumber);
+    UTM_KEYS.forEach((key) => sheetsParams.append(key, utms[key]));
+    fetch(`${SHEETS_URL}?${sheetsParams.toString()}`, { method: 'GET', mode: 'no-cors', keepalive: true });
+
     // Salvar lead no Supabase (fire-and-forget)
     supabase?.from('sheet_leads_36').insert({
       'Nome': trimmedName,
