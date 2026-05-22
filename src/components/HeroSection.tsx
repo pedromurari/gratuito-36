@@ -5,10 +5,9 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { toast } from '@/hooks/use-toast';
 
-const supabase = createClient(
-  import.meta.env.VITE_SUPABASE_URL,
-  import.meta.env.VITE_SUPABASE_ANON_KEY
-);
+const SUPABASE_URL = import.meta.env.VITE_SUPABASE_URL as string | undefined;
+const SUPABASE_KEY = import.meta.env.VITE_SUPABASE_ANON_KEY as string | undefined;
+const supabase = SUPABASE_URL && SUPABASE_KEY ? createClient(SUPABASE_URL, SUPABASE_KEY) : null;
 
 const UTM_KEYS = ['utm_source', 'utm_medium', 'utm_campaign', 'utm_content', 'utm_term'] as const;
 type UtmKey = typeof UTM_KEYS[number];
@@ -118,7 +117,7 @@ const HeroSection = () => {
     }).catch((err) => console.error('Erro ao enviar CAPI:', err));
 
     // Salvar lead no Supabase (fire-and-forget)
-    supabase.from('sheet_leads_36').insert({
+    supabase?.from('sheet_leads_36').insert({
       'Nome': trimmedName,
       'E-mail': trimmedEmail,
       'Whatsapp': whatsappNumber,
